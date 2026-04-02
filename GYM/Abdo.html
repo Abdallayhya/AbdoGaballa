@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>خطة الوجبات الأسبوعية - Boda Technology</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
+
+        :root {
+            --primary: #3b82f6;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(to left, #3b82f6, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .tabs-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .tabs-nav {
+            display: flex;
+            overflow-x: auto;
+            gap: 10px;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            scrollbar-width: thin;
+        }
+
+        .tab-btn {
+            background: var(--card-bg);
+            border: 2px solid transparent;
+            color: var(--text-dim);
+            padding: 10px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            white-space: nowrap;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            border-color: var(--primary);
+            color: var(--text-main);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .day-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .day-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .meal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .meal-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .meal-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary);
+        }
+
+        .meal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
+        }
+
+        .meal-title {
+            font-weight: 800;
+            color: var(--secondary);
+            font-size: 1.1rem;
+        }
+
+        .meal-icon {
+            font-size: 1.2rem;
+        }
+
+        .item-list {
+            list-style: none;
+        }
+
+        .item-list li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .item-list li::before {
+            content: '•';
+            color: var(--accent);
+            margin-left: 10px;
+            font-weight: bold;
+        }
+
+        .qty-badge {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            margin-right: auto;
+            color: var(--text-dim);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: var(--text-dim);
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.8rem; }
+            .meal-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>📅 خطة التغذية الأسبوعية</h1>
+    <p style="color: var(--text-dim);">نظام غذائي متوازن - Boda Technology</p>
+</header>
+
+<div class="tabs-container">
+    <div class="tabs-nav" id="tabs-nav">
+        <button class="tab-btn active" onclick="showDay(1)">اليوم ١</button>
+        <button class="tab-btn" onclick="showDay(2)">اليوم ٢</button>
+        <button class="tab-btn" onclick="showDay(3)">اليوم ٣</button>
+        <button class="tab-btn" onclick="showDay(4)">اليوم ٤</button>
+        <button class="tab-btn" onclick="showDay(5)">اليوم ٥</button>
+        <button class="tab-btn" onclick="showDay(6)">اليوم ٦</button>
+        <button class="tab-btn" onclick="showDay(7)">اليوم ٧</button>
+    </div>
+
+    <!-- DAY 1 -->
+    <div id="day-1" class="day-content active">
+        <div class="meal-grid">
+            <div class="meal-card">
+                <div class="meal-header"><span class="meal-title">الفطار</span><span class="meal-icon">🍳</span></div>
+                <ul class="item-list">
+                    <li>قهوة</li>
+                    <li>توست أسمر <span class="qty-badge">٤ قطع</span></li>
+                    <li>بيض أومليت <span class="qty-badge">٤ بيضات</span></li>
+                    <li>سلطة <span class="qty-badge">١٥٠ج</span></li>
+                </ul>
+            </div>
+            <div class="meal-card">
+                <div class="meal-header"><span class="meal-title">الوجبة ٢</span><span class="meal-icon">🍚</span></div>
+                <ul class="item-list">
+                    <li>أرز <span class="qty-badge">١٥٠ج</span></li>
+                    <li>صدور دجاج <span class="qty-badge">٢٠٠ج</span></li>
+                </ul>
+            </div>
+            <div class="meal-card">
+                <div class="meal-header"><span class="meal-title">الوجبة ٣</span><span class="meal-icon">🍗</span></div>
+                <ul class="item-list">
+                    <li>أرز <span class="qty-badge">٢٠٠ج</span></li>
+                    <li>صدور دجاج <span class="qty-badge">٢٠٠ج</span></li>
+                    <li>سلطة <span class="qty-badge">١٥٠ج</span></li>
+                </ul>
+            </div>
+            <div class="meal-card">
+                <div class="meal-header"><span class="meal-title">الوجبة ٤</span><span class="meal-icon">🧀</span></div>
+                <ul class="item-list">
+                    <li>جبنة ملح خفيف <span class="qty-badge">١٠٠ج</span></li>
+                    <li>توست أسمر <span class="qty-badge">٢ قطع</span></li>
+                </ul>
+            </div>
+            <div class="meal-card">
+                <div class="meal-header"><span class="meal-title">سناك ٥</span><span class="meal-icon">🥛</span></div>
+                <ul class="item-list">
+                    <li>زبادي يوناني</li>
+                    <li>كاكاو <span class="qty-badge">١ ملعقة</span></li>
+                    <li>موز <span class="qty-badge">٥٠ج</span></li>
+                    <li>فراولة <span class="qty-badge">٥٠ج</span></li>
+                </ul>
+            </div>
+            <div class="meal-card">
+                <div class="meal-header"><span class="meal-title">سناك ٦</span><span class="meal-icon">🥜</span></div>
+                <ul class="item-list">
+                    <li>مكسرات <span class="qty-badge">٧٠ج</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- DAY 2 -->
+    <div id="day-2" class="day-content">
+        <div class="meal-grid">
+            <div class="meal-card">
+                <div class="meal-header"><span class="meal-title">الفطار</span><span class="meal-icon">🍳</span></div>
+                <ul class="item-list">
+                    <li>جبنة ملح خفيف <span class="qty-badge">١٠٠ج</span></li>
+                    <li>بيض أومليت بالخضار <span class="qty-badge">٣ بيضات</span></li>
+                    <li>سلطة <span class="qty-badge">١٥٠ج</span></li>
+                    <li>عيش بلدي <span class="qty-badge">رغيف</span></li>
+                    <li>قهوة</li>
+                </ul>
+            </div>
+            <div class="meal-card">
+                <div class="meal-header"><span class="meal-title">قبل التمرين</span><span class="meal-icon">⚡</span></div>
+                <ul class="item-list">
+                    <li>بطاطس مسلوقة <span class="qty-badge">٢٠٠ج</span></li>
+                    <li>قهوة</li>
+                </ul>
+            </div>
+            <div class="meal-card">
+                <div class="meal-header"><span class="meal-title">بعد التمرين</span><span class="meal-icon">💪</span></div>
+                <ul class="item-list">
+                    <li>أرز <span class="qty-badge">٢٥٠ج</span></li>
+                    <li>لحمة قليلة الدهن <span class="qty-badge">٣٠٠ج</span></li>
+                    <li>سلطة <span class="qty-badge">١٥٠ج</span></li>
+                </ul>
+            </div>
+            <div class="meal-card">
+                <div class="meal-header"><span class="meal-title">العشاء</span><span class="meal-icon">🌙</span></div>
+                <ul class="item-list">
+                    <li>جبنة قريش <span class="qty-badge">٢٠٠ج</span></li>
+                    <li>سلطة <span class="qty-badge">١٠٠ج</span></li>
+                    <li>توست أسمر <span class="qty-badge">٢ قطع</span></li>
+                </ul>
+            </div>
+            <div class="meal-card">
+                <div class="meal-header"><span class="meal-title">سناك</span><span class="meal-icon">🍲</span></div>
+                <ul class="item-list">
+                    <li>ترمس <span class="qty-badge">١٥٠ج</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- DAY 3 -->
+    <div id="day-3" class="day-content">
+        <div class="meal-grid">
+            <div class="meal-card">
+                <div class="meal-header"><span class="meal-title">الفطار</span><span class="meal-icon">🍳</span></div>
+                <ul class="item-list">
+                    <li>جبنة ملح خفيف <span class="qty-badge">١٠٠ج</span></li>
+                    <li>تونة بدون زيت <span class="qty-badge">١٠٠ج</span></li>
+                    <li>سلطة <span class="qty-badge">١٥٠ج</span></li>
+                    <li>عيش بلدي <span class="qty-badge">رغيف</span></li>
+                </ul>
+            </div>
+            <div class="meal-card">
+                <div class="meal-header"><span class="meal-title">قبل التمرين</span><span class="meal-icon">⚡</span></div>
+                <ul class="item-list">
+                    <li>بطاطا مسلوقة <span class="qty-badge">١٥٠ج</span></li>
+                    <li>موزة</li>
+                    <li>قهوة</li>
+                </ul>
+            </div>
+            <div class="meal-card">
+                <div class="meal-header"><span class="meal-title">بعد التمرين</span><span class="meal-icon">💪</span></div>
+                <ul class="item-list">
+                    <li>أرز بسمتي <span class="qty-badge">١٥٠ج</span></li>
+                    <li>لحمة قليلة الدهن <span class="qty-badge">٢٥٠ج</span></li>
+                    <li>سلطة <span class="qty-badge">١٥٠ج</span></li>
+                </ul>
+            </div>
+            <div class="meal-card">
+                <div class="meal-header"><span class="meal-title">سناك</span><span class="meal-icon">🥣</span></div>
+                <ul class="item-list">
+                    <li>كريم أوف ريس <span class="qty-badge">١٥٠ج</span></li>
+                    <li>لبن دافئ كامل الدسم <span class="qty-badge">١٥٠مل</span></li>
+                    <li>عسل + كاكاو <span class="qty-badge">١ ملعقة</span></li>
+                    <li>موز + فراولة <span class="qty-badge">٣٠ج</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- DAY 4 -->
+    <div id="day-4" class="day-content">
+        <div class="meal-grid">
+            <div class="meal-card">
+                <div class="meal-header"><span class="meal-title">الفطار</span><span class="meal-icon">🍳</span></div>
+                <ul class="item-list">
+                    <li>جبنة قريش <span class="qty-badge">٢٠٠ج</span></li>
+                    <li>بيض <span class="qty-badge">٢ بيضة</span></li>
+                    <li>سلطة <span class="qty-badge">١٥٠ج</span></li>
+                    <li>رغيف عيش</li>
+                </ul>
+            </div>
+            <div class="meal-card">
+                <div class="meal-header"><span class="meal-title">قبل التمرين</span><span class="meal-icon">⚡</span></div>
+                <ul class="item-list">
+                    <li>بطاطا مشوية/مسلوقة <span class="qty-badge">١٥٠ج</span></li>
+                    <li>عسل + موزة</li>
+                    <li>قهوة</li>
+                </ul>
+            </div>
+            <div class="meal-card">
+                <div class="meal-header"><span class="meal-title">بعد التمرين</span><span class="meal-icon">💪</span></div>
+                <ul class="item-list">
+                    <li>كبدة مشوية <span class="qty-badge">٢٠٠ج</span></li>
+                    <li>أرز <span class="qty-badge">١٠٠ج</span></li>
+                    <li>سلطة <span class="qty-badge">١٥٠ج</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- DAY 5 -->
+    <div id="day-5" class="day-content">
+        <div class="meal-grid">
+            <div class="meal-card">
+                <div class="meal-header"><span class="meal-title">الفطار</span><span class="meal-icon">🍳</span></div>
+                <ul class="item-list">
+                    <li>فول <span class="qty-badge">١٥٠ج</span></li>
+                    <li>بيض (١ بدون صفار) <span class="qty-badge">٣ بيضات</span></li>
+                    <li>خضار <span class="qty-badge">١٠٠ج</span></li>
+                    <li>سلطة <span class="qty-badge">١٠٠ج</span></li>
+                    <li>قهوة</li>
+                </ul>
+            </div>
+            <div class="meal-card">
+                <div class="meal-header"><span class="meal-title">قبل التمرين</span><span class="meal-icon">⚡</span></div>
+                <ul class="item-list">
+                    <li>أرز <span class="qty-badge">١٥٠ج</span></li>
+                    <li>موزة + ٣ تمرات</li>
+                    <li>قهوة</li>
+                </ul>
+            </div>
+            <div class="meal-card">
+                <div class="meal-header"><span class="meal-title">بعد التمرين</span><span class="meal-icon">💪</span></div>
+                <ul class="item-list">
+                    <li>سمك <span class="qty-badge">٢٥٠ج</span></li>
+                    <li>أرز <span class="qty-badge">١٥٠ج</span></li>
+                    <li>سلطة <span class="qty-badge">١٥٠ج</span></li>
+                </ul>
+            </div>
+            <div class="meal-card">
+                <div class="meal-header"><span class="meal-title">العشاء</span><span class="meal-icon">🌙</span></div>
+                <ul class="item-list">
+                    <li>زبادي يوناني</li>
+                    <li>فاكهة <span class="qty-badge">٥٠ج</span></li>
+                    <li>عسل <span class="qty-badge">١ ملعقة</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- DAY 6 -->
+    <div id="day-6" class="day-content">
+        <div class="meal-grid">
+            <div class="meal-card">
+                <div class="meal-header"><span class="meal-title">الفطار</span><span class="meal-icon">🍳</span></div>
+                <ul class="item-list">
+                    <li>بطاطس إير فراير <span class="qty-badge">١٥٠ج</span></li>
+                    <li>بيض أومليت <span class="qty-badge">٤ بيضات</span></li>
+                    <li>سلطة <span class="qty-badge">١٠٠ج</span></li>
+                    <li>عيش بلدي <span class="qty-badge">نصف رغيف</span></li>
+                </ul>
+            </div>
+            <div class="meal-card">
+                <div class="meal-header"><span class="meal-title">قبل التمرين</span><span class="meal-icon">⚡</span></div>
+                <ul class="item-list">
+                    <li>بطاطا <span class="qty-badge">١٥٠ج</span></li>
+                    <li>عسل <span class="qty-badge">١ ملعقة</span></li>
+                </ul>
+            </div>
+            <div class="meal-card">
+                <div class="meal-header"><span class="meal-title">بعد التمرين</span><span class="meal-icon">💪</span></div>
+                <ul class="item-list">
+                    <li>مكرونة بالصلصة <span class="qty-badge">٢٠٠ج</span></li>
+                    <li>لحمة مفرومة <span class="qty-badge">٣٠٠ج</span></li>
+                </ul>
+            </div>
+            <div class="meal-card">
+                <div class="meal-header"><span class="meal-title">العشاء</span><span class="meal-icon">🌙</span></div>
+                <ul class="item-list">
+                    <li>جبنة قريش <span class="qty-badge">١٥٠ج</span></li>
+                    <li>خضار <span class="qty-badge">١٠٠ج</span></li>
+                </ul>
+            </div>
+            <div class="meal-card">
+                <div class="meal-header"><span class="meal-title">سناك</span><span class="meal-icon">🍓</span></div>
+                <ul class="item-list">
+                    <li>كريم أوف ريس (فراولة) <span class="qty-badge">١٥٠ج</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- DAY 7 -->
+    <div id="day-7" class="day-content">
+        <div class="meal-grid">
+            <div class="meal-card">
+                <div class="meal-header"><span class="meal-title">الفطار</span><span class="meal-icon">🍳</span></div>
+                <ul class="item-list">
+                    <li>فول <span class="qty-badge">١٥٠ج</span></li>
+                    <li>فلافل إير فراير <span class="qty-badge">٣ قطع</span></li>
+                    <li>جبنة تركي <span class="qty-badge">٥٠ج</span></li>
+                    <li>سلطة <span class="qty-badge">١٠٠ج</span></li>
+                    <li>عيش بلدي <span class="qty-badge">رغيف</span></li>
+                </ul>
+            </div>
+            <div class="meal-card">
+                <div class="meal-header"><span class="meal-title">الوجبة ٢</span><span class="meal-icon">🍲</span></div>
+                <ul class="item-list">
+                    <li>كبدة <span class="qty-badge">٢٠٠ج</span></li>
+                    <li>أرز <span class="qty-badge">٢٠٠ج</span></li>
+                    <li>سلطة <span class="qty-badge">١٥٠ج</span></li>
+                </ul>
+            </div>
+            <div class="meal-card">
+                <div class="meal-header"><span class="meal-title">الوجبة ٣</span><span class="meal-icon">🍗</span></div>
+                <ul class="item-list">
+                    <li>دجاج <span class="qty-badge">٢٠٠ج</span></li>
+                    <li>سلطة <span class="qty-badge">١٥٠ج</span></li>
+                </ul>
+            </div>
+            <div class="meal-card">
+                <div class="meal-header"><span class="meal-title">سناك</span><span class="meal-icon">🍿</span></div>
+                <ul class="item-list">
+                    <li>ترمس <span class="qty-badge">٢٠٠ج</span></li>
+                    <li>فشار <span class="qty-badge">٥٠ج</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<footer>
+    <p>Boda Technology &copy; 2026 - خطة وجبات ذكية</p>
+</footer>
+
+<script>
+    function showDay(dayNum) {
+        // Hide all content
+        document.querySelectorAll('.day-content').forEach(content => {
+            content.classList.remove('active');
+        });
+        // Remove active from all buttons
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        // Show selected
+        document.getElementById('day-' + dayNum).classList.add('active');
+        // Set button active
+        const btnIndex = dayNum - 1;
+        document.querySelectorAll('.tab-btn')[btnIndex].classList.add('active');
+    }
+</script>
+
+</body>
+</html>
