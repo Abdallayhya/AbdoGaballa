@@ -122,53 +122,57 @@ document.addEventListener('DOMContentLoaded', function() {
             contactForm.reset();
         });
     }
-    
-const BOT_TOKEN = '7771527184:AAG5wTlmbctY-jBbBwZyUMDfBiskemdRQF0';
+  const BOT_TOKEN = '7771527184:AAG5wTlmbctY-jBbBwZyUMDfBiskemdRQF0';
 const CHAT_ID = '1437872748';
-const EMAILJS_SERVICE_ID = 'service_rl5zkzs';
-const EMAILJS_TEMPLATE_ID = 'template_0cmwswi';
-const EMAILJS_PUBLIC_KEY = '4K2FtkLGptlA6gVXZ';
-emailjs.init(EMAILJS_PUBLIC_KEY);
-contactForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const name = document.getElementById('name').value;
-    const email = document.getElementById('email').value;
-    const message = document.getElementById('message').value;
-    
-    formStatus.innerHTML = '<p style="color: blue;">⏳ جاري الإرسال...</p>';
-    
-    // إرسال إلى تليجرام
-    const telegramPromise = fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            chat_id: CHAT_ID,
-            text: `📩 رسالة جديدة:\n👤 ${name}\n📧 ${email}\n💬 ${message}`,
-            parse_mode: 'Markdown'
-        })
-    });
-    
-    // إرسال إلى البريد
-    const emailPromise = emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-        from_name: name,
-        from_email: email,
-        message: message
-    });
-    
-    try {
-        await Promise.all([telegramPromise, emailPromise]);
-        formStatus.innerHTML = '<p style="color: green;">✅ تم الإرسال بنجاح! (تليجرام + بريد)</p>';
-        contactForm.reset();
+
+// const contactForm = document.getElementById('contactForm');
+const formStatus = document.getElementById('formStatus');
+
+// if (contactForm) {
+//     contactForm.addEventListener('submit', async (e) => {
+//         e.preventDefault();
         
-        setTimeout(() => {
-            formStatus.innerHTML = '';
-        }, 5000);
-    } catch (error) {
-        formStatus.innerHTML = '<p style="color: red;">❌ حدث خطأ، يرجى المحاولة لاحقاً</p>';
-        console.error(error);
-    }
-});
+//         const name = document.getElementById('name').value;
+//         const email = document.getElementById('email').value;
+//         const message = document.getElementById('message').value;
+        
+//         if (!name || !email || !message) {
+//             formStatus.innerHTML = '<p style="color: red;">❌ الرجاء ملء جميع الحقول</p>';
+//             return;
+//         }
+        
+//         formStatus.innerHTML = '<p style="color: blue;">⏳ جاري الإرسال...</p>';
+        
+//         try {
+//             // Send to Telegram only
+//             const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+//                 method: 'POST',
+//                 headers: { 'Content-Type': 'application/json' },
+//                 body: JSON.stringify({
+//                     chat_id: CHAT_ID,
+//                     text: `📩 رسالة جديدة:\n👤 الاسم: ${name}\n📧 البريد: ${email}\n💬 الرسالة: ${message}`,
+//                     parse_mode: 'Markdown'
+//                 })
+//             });
+            
+//             const result = await response.json();
+            
+//             if (result.ok) {
+//                 formStatus.innerHTML = '<p style="color: green;">✅ تم إرسال رسالتك بنجاح!</p>';
+//                 contactForm.reset();
+                
+//                 setTimeout(() => {
+//                     formStatus.innerHTML = '';
+//                 }, 5000);
+//             } else {
+//                 formStatus.innerHTML = '<p style="color: red;">❌ فشل الإرسال، حاول مرة أخرى</p>';
+//             }
+//         } catch (error) {
+//             console.error('Error:', error);
+//             formStatus.innerHTML = '<p style="color: red;">❌ حدث خطأ، يرجى المحاولة لاحقاً</p>';
+//         }
+//     });
+// }
     // Three.js Dynamic Background for Home Section
     let scene, camera, renderer, particles;
     const homeSection = document.getElementById('home');
